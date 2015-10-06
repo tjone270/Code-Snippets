@@ -1,0 +1,43 @@
+set userName to "shortNameOfUserAccount"
+set fullName to "fullNameOfUserAccount"
+
+set userPassword to "noSpecialCharactersOrSpacesInThePassword"
+
+set isAdmin to true
+set generateHomeDirectory to true
+
+set userShell to "/bin/bash"
+
+set userID to "generate"
+set groupID to "20"
+
+set homeDirectory to "/Users"
+
+set generatedUUID to ""
+
+if userID is "generate" then
+	set userID to (do shell script "dscl . -list /Users UniqueID | awk '{print $2}' | sort -ug | tail -1")
+	set userID to (userID + 1)
+end if
+if generatedUUID is "generate" then
+	set generatedUUID to (do shell script "uuidgen")
+end if
+do shell script "dscl . create /Users/" & userName with administrator privileges
+do shell script "dscl . create /Users/" & userName & " UserShell \"" & userShell & "\"" with administrator privileges
+do shell script "dscl . create /Users/" & userName & " RealName \"" & fullName & "\"" with administrator privileges
+do shell script "dscl . create /Users/" & userName & " UniqueID " & userID with administrator privileges
+do shell script "dscl . create /Users/" & userName & " PrimaryGroupID " & groupID with administrator privileges
+do shell script "dscl . create /Users/" & userName & " NFSHomeDirectory \"" & homeDirectory & "/" & userName & "\"" with administrator privileges
+do shell script "dscl . create /Users/" & userName & " GeneratedUID " & generatedUUID with administrator privileges
+do shell script "dscl . create /Users/" & userName & " RecordType dsRecTypeStandard:Users" with administrator privileges
+do shell script "dscl . create /Users/" & userName & " AppleMetaNodeLocation /Local/Default" with administrator privileges
+do shell script "dscl . passwd /Users/" & userName & space & userPassword with administrator privileges
+if isAdmin is true then
+	do shell script "dscl . append /Groups/admin GroupMembership " & userName with administrator privileges
+	do shell script "dscl . append /Groups/_lpadmin GroupMembership " & userName with administrator privileges
+	do shell script "dscl . append /Groups/_appserveradm GroupMembership " & userName with administrator privileges
+	do shell script "dscl . append /Groups/_appserverusr GroupMembership " & userName with administrator privileges
+end if
+if generateHomeDirectory is true then
+	do shell script "createhomedir -c -u " & userName with administrator privileges
+end if

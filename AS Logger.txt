@@ -1,0 +1,1 @@
+on logEntry(logText)	set theDate to do shell script "date"	do shell script "echo [" & theDate & "]: " & logText & " >> ~/Documents/Log.txt"	log logTextend logEntry

@@ -1,0 +1,13 @@
+on SearchReplace(sourceStr, searchString, replaceString)
+	-- replace <searchString> with <replaceString> in <sourceStr>
+	set searchStr to (searchString as text)
+	set replaceStr to (replaceString as text)
+	set sourceStr to (sourceStr as text)
+	set saveDelims to AppleScript's text item delimiters
+	set AppleScript's text item delimiters to (searchString)
+	set theList to (every text item of sourceStr)
+	set AppleScript's text item delimiters to (replaceString)	
+	set theString to theList as string
+	set AppleScript's text item delimiters to saveDelims
+	return theString
+end SearchReplace
